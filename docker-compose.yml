@@ -19,5 +19,5 @@ services:
     working_dir: /work/textlint
     command: >
       sh -c "
-        textlint ../contents/*.re
+        textlint ../contents/*.re -f pretty-error
        "

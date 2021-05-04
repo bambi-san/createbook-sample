@@ -1,17 +1,59 @@
-name: learn-github-actions
+name: review-github-actions
 on: [push]
 jobs:
-  check-bats-version:
+  lint:
+    name: lint-contents
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
-      - run: npm install -g textlint
-      - run: npm install -g textlint-plugin-review \
-        textlint-rule-prh \
-        textlint-rule-preset-ja-technical-writing \
-        textlint-rule-preset-ja-spacing \
-        textlint-filter-rule-comments
-      - run: cd textlint && \
-        textlint ../contents/*.re
+      - run: docker-compose build textlint
+      - run: docker-compose up textlint
 
+  # docker-compose 使わない場合(step以降を差し替える)
+      #- uses: actions/checkout@v2
+      #- uses: actions/setup-node@v1
+      #- name: npm install
+      #  run: |
+      #    npm install -g textlint
+      #    npm install -g textlint-plugin-review textlint-rule-prh textlint-rule-preset-ja-technical-writing textlint-rule-preset-ja-spacing textlint-filter-rule-comments
+      #- name: textlint
+      #  run: |
+      #    cd textlint && \
+      #    textlint ../contents/*.re \
+      #    -f pretty-error
+
+  deploy:
+    name: make-book
+    # lintが失敗しても製本は常に行う
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker-compose up review
+      # 成果物をWeb上からダウンロードできるように設定する
+      - name: 'Upload Book'
+        uses: actions/upload-artifact@v2
+        with:
+          name: mybook
+          path: book.pdf
+          retention-days: 5  # 5日間ダウンロードが可能になる
+
+  # docker-compose 使わない場合
+  #deploy:
+  #  container: vvakame/review:5.1
+  #  name: make-book
+  #  # lintが失敗しても製本は常に行う
+  #  if: ${{ always() }}
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - uses: actions/checkout@v2
+  #    # 成果物をWeb上からダウンロードできるように設定する
+  #    - run: |
+  #        sh -c "review-pdfmaker config.yml"
+  #    - name: 'Upload Book'
+  #      uses: actions/upload-artifact@v2
+  #      with:
+  #        name: myboo
+  #        path: book.pdf
+  #        retention-days: 5  # 5日間ダウンロードが可能になる
