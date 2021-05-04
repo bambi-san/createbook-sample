@@ -1,0 +1,23 @@
+version: '3'
+services:
+  review:
+    image: vvakame/review:5.1
+    volumes:
+      - .:/work
+    working_dir: /work
+    command: >
+      sh -c "
+        review-pdfmaker config.yml
+      "
+
+  textlint:
+    build:
+      context: .
+      dockerfile: ./textlint/Dockerfile
+    volumes:
+      - .:/work
+    working_dir: /work/textlint
+    command: >
+      sh -c "
+        textlint ../contents/*.re
+       "

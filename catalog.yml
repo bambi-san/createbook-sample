@@ -1,0 +1,12 @@
+PREDEF:
+  - intro.re
+
+CHAPS:
+  - ch00/01.re
+  - 第一部:
+    - ch01/01.re
+
+APPENDIX:
+
+POSTDEF:
+  - postscript.re

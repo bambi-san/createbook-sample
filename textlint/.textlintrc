@@ -1,0 +1,18 @@
+{
+  "plugins": [
+    "review"
+  ],
+  "filters": {
+    "comments": true
+  },
+  "rules": {
+    "prh": {
+      "rulePaths": [
+        "./rules/WEB+DB_PRESS.yml",
+        "./rules/techbooster.yml"
+      ]
+    },
+    "preset-ja-technical-writing": true,
+    "preset-ja-spacing": true
+  }
+}
